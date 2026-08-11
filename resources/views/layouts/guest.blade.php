@@ -24,7 +24,7 @@
         <div class="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-6 py-12">
             <a href="{{ url('/') }}" class="mb-6 flex items-center gap-2.5">
                 @if ($setting->logoUrl())
-                    <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->app_name }}" class="h-14 w-14 rounded-xl object-cover">
+                    <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->app_name }}" class="h-14 w-14 rounded-xl object-cover" style="height:56px;width:56px;object-fit:cover;border-radius:0.75rem;">
                 @else
                     <span class="flex h-14 w-14 items-center justify-center rounded-xl bg-teal-600 text-white">
                         <x-heroicon-o-academic-cap class="h-7 w-7" />

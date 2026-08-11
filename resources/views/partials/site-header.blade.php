@@ -53,7 +53,7 @@
     <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <a href="{{ url('/') }}" class="flex items-center gap-2.5">
             @if ($setting->logoUrl())
-                <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->app_name }}" class="h-12 w-12 rounded-xl object-cover">
+                <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->app_name }}" class="h-12 w-12 rounded-xl object-cover" style="height:48px;width:48px;object-fit:cover;border-radius:0.75rem;">
             @else
                 <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-white">
                     <x-heroicon-o-academic-cap class="h-6 w-6" />

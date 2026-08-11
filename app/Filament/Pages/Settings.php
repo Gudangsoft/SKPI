@@ -5,11 +5,15 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use App\Support\Roles;
 use BackedEnum;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +45,18 @@ class Settings extends Page
             'tagline',
             'logo_path',
             'favicon_path',
+            'contact_address',
+            'contact_phone',
+            'contact_email',
+            'social_facebook_url',
+            'social_instagram_url',
+            'social_twitter_url',
+            'social_youtube_url',
+            'footer_bg_type',
+            'footer_bg_color',
+            'footer_bg_image_path',
+            'footer_text_color',
+            'footer_accent_color',
         ]));
     }
 
@@ -76,6 +92,74 @@ class Settings extends Page
                             ->disk('public')
                             ->directory('branding')
                             ->visibility('public'),
+                    ]),
+
+                Section::make('Kontak & Media Sosial')
+                    ->description('Tampil pada bilah atas dan kolom "Informasi" di footer halaman utama.')
+                    ->collapsible()
+                    ->columns(2)
+                    ->components([
+                        Textarea::make('contact_address')
+                            ->label('Alamat')
+                            ->rows(2)
+                            ->columnSpanFull(),
+                        TextInput::make('contact_phone')
+                            ->label('Telepon')
+                            ->tel()
+                            ->maxLength(255),
+                        TextInput::make('contact_email')
+                            ->label('Email')
+                            ->email()
+                            ->maxLength(255),
+                        TextInput::make('social_facebook_url')
+                            ->label('Facebook')
+                            ->url()
+                            ->placeholder('https://facebook.com/…'),
+                        TextInput::make('social_instagram_url')
+                            ->label('Instagram')
+                            ->url()
+                            ->placeholder('https://instagram.com/…'),
+                        TextInput::make('social_twitter_url')
+                            ->label('Twitter / X')
+                            ->url()
+                            ->placeholder('https://x.com/…'),
+                        TextInput::make('social_youtube_url')
+                            ->label('YouTube')
+                            ->url()
+                            ->placeholder('https://youtube.com/…'),
+                    ]),
+
+                Section::make('Footer')
+                    ->description('Atur tampilan latar footer halaman utama.')
+                    ->collapsible()
+                    ->components([
+                        Radio::make('footer_bg_type')
+                            ->label('Tipe Latar')
+                            ->options([
+                                'color' => 'Warna Polos',
+                                'image' => 'Gambar',
+                            ])
+                            ->inline()
+                            ->live()
+                            ->default('color')
+                            ->required(),
+                        FileUpload::make('footer_bg_image_path')
+                            ->label('Gambar Latar')
+                            ->image()
+                            ->disk('public')
+                            ->directory('branding')
+                            ->visibility('public')
+                            ->visible(fn (Get $get) => $get('footer_bg_type') === 'image'),
+                        ColorPicker::make('footer_bg_color')
+                            ->label('Warna Latar')
+                            ->hex()
+                            ->visible(fn (Get $get) => $get('footer_bg_type') === 'color'),
+                        ColorPicker::make('footer_text_color')
+                            ->label('Warna Teks')
+                            ->hex(),
+                        ColorPicker::make('footer_accent_color')
+                            ->label('Warna Aksen (garis atas)')
+                            ->hex(),
                     ]),
             ])
             ->statePath('data');

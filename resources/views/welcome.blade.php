@@ -30,47 +30,123 @@
 
         @include('partials.site-header')
 
-        <!-- Hero -->
-        <section class="relative overflow-hidden">
-            <div class="absolute inset-0 -z-10 bg-gradient-to-b from-indigo-50 via-white to-white"></div>
-            <div class="absolute -top-24 right-[-10%] -z-10 h-96 w-96 rounded-full bg-indigo-100 blur-3xl"></div>
-            <div class="absolute -bottom-32 left-[-10%] -z-10 h-96 w-96 rounded-full bg-teal-50 blur-3xl"></div>
+        @php $heroSlides = \App\Models\HeroSlide::active()->get(); @endphp
 
-            <div class="mx-auto max-w-6xl px-6 pb-20 pt-16 sm:pt-24">
-                <div class="mx-auto max-w-3xl text-center">
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
-                        <x-heroicon-o-sparkles class="h-3.5 w-3.5" />
-                        Layanan Surat Keterangan Pendamping Ijazah
-                    </span>
+        @if ($heroSlides->isNotEmpty())
+            <!-- Hero Slider -->
+            <section
+                x-data="{
+                    total: {{ $heroSlides->count() }},
+                    active: 0,
+                    timer: null,
+                    start() { this.timer = setInterval(() => this.next(), 5000); },
+                    stop() { clearInterval(this.timer); },
+                    next() { this.active = (this.active + 1) % this.total; },
+                    prev() { this.active = (this.active - 1 + this.total) % this.total; },
+                }"
+                x-init="start()"
+                x-cloak
+                @mouseenter="stop()"
+                @mouseleave="start()"
+                class="relative isolate overflow-hidden bg-slate-900"
+                style="min-height: 520px;"
+            >
+                @foreach ($heroSlides as $index => $slide)
+                    <div
+                        x-show="active === {{ $index }}"
+                        x-transition:enter="transition ease-out duration-700"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-500"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="absolute inset-0"
+                    >
+                        @if ($slide->imageUrl())
+                            <img src="{{ $slide->imageUrl() }}" alt="{{ $slide->title }}" class="absolute inset-0 h-full w-full object-cover">
+                        @endif
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-slate-900/20"></div>
 
-                    <h1 class="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-                        Ajukan SKPI Anda, <span class="text-indigo-600">tanpa antre ke kampus</span>
-                    </h1>
-
-                    <p class="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-500 sm:text-lg">
-                        Satu portal untuk mengajukan, melacak, dan menerbitkan Surat Keterangan Pendamping Ijazah —
-                        mulai dari prestasi, organisasi, sertifikasi, hingga pengalaman magang mahasiswa
-                        {{ $setting->tagline }}.
-                    </p>
-
-                    <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                        <a href="{{ $dashboardUrl ?? route('login') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 sm:w-auto">
-                            Mulai Pengajuan
-                            <x-heroicon-o-arrow-right class="h-4 w-4" />
-                        </a>
-                        <a href="#alur" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 sm:w-auto">
-                            Lihat Alur Pengajuan
-                        </a>
+                        <div class="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-6 py-24 text-center">
+                            @if ($slide->title)
+                                <h1 class="max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-5xl">{{ $slide->title }}</h1>
+                            @endif
+                            @if ($slide->subtitle)
+                                <p class="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">{{ $slide->subtitle }}</p>
+                            @endif
+                            @if ($slide->button_label && $slide->button_url)
+                                <a href="{{ $slide->button_url }}" class="mt-8 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
+                                    {{ $slide->button_label }}
+                                    <x-heroicon-o-arrow-right class="h-4 w-4" />
+                                </a>
+                            @endif
+                        </div>
                     </div>
+                @endforeach
 
-                    <p class="mt-6 text-xs text-slate-400">
-                        Staf program studi &amp; fakultas silakan
-                        <a href="{{ route('login') }}" class="font-medium text-slate-500 underline underline-offset-2 hover:text-slate-700">masuk di sini</a>
-                        untuk memverifikasi pengajuan.
-                    </p>
+                @if ($heroSlides->count() > 1)
+                    <button @click="prev()" aria-label="Sebelumnya" class="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20">
+                        <x-heroicon-o-chevron-left class="h-5 w-5" />
+                    </button>
+                    <button @click="next()" aria-label="Berikutnya" class="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20">
+                        <x-heroicon-o-chevron-right class="h-5 w-5" />
+                    </button>
+
+                    <div class="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
+                        @foreach ($heroSlides as $index => $slide)
+                            <button
+                                @click="active = {{ $index }}"
+                                aria-label="Slide {{ $index + 1 }}"
+                                class="h-2 rounded-full bg-white transition-all"
+                                :class="active === {{ $index }} ? 'w-6 opacity-100' : 'w-2 opacity-40'"
+                            ></button>
+                        @endforeach
+                    </div>
+                @endif
+            </section>
+        @else
+            <!-- Hero (default) -->
+            <section class="relative overflow-hidden">
+                <div class="absolute inset-0 -z-10 bg-gradient-to-b from-indigo-50 via-white to-white"></div>
+                <div class="absolute -top-24 right-[-10%] -z-10 h-96 w-96 rounded-full bg-indigo-100 blur-3xl"></div>
+                <div class="absolute -bottom-32 left-[-10%] -z-10 h-96 w-96 rounded-full bg-teal-50 blur-3xl"></div>
+
+                <div class="mx-auto max-w-6xl px-6 pb-20 pt-16 sm:pt-24">
+                    <div class="mx-auto max-w-3xl text-center">
+                        <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+                            <x-heroicon-o-sparkles class="h-3.5 w-3.5" />
+                            Layanan Surat Keterangan Pendamping Ijazah
+                        </span>
+
+                        <h1 class="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+                            Ajukan SKPI Anda, <span class="text-indigo-600">tanpa antre ke kampus</span>
+                        </h1>
+
+                        <p class="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-500 sm:text-lg">
+                            Satu portal untuk mengajukan, melacak, dan menerbitkan Surat Keterangan Pendamping Ijazah —
+                            mulai dari prestasi, organisasi, sertifikasi, hingga pengalaman magang mahasiswa
+                            {{ $setting->tagline }}.
+                        </p>
+
+                        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                            <a href="{{ $dashboardUrl ?? route('login') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 sm:w-auto">
+                                Mulai Pengajuan
+                                <x-heroicon-o-arrow-right class="h-4 w-4" />
+                            </a>
+                            <a href="#alur" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 sm:w-auto">
+                                Lihat Alur Pengajuan
+                            </a>
+                        </div>
+
+                        <p class="mt-6 text-xs text-slate-400">
+                            Staf program studi &amp; fakultas silakan
+                            <a href="{{ route('login') }}" class="font-medium text-slate-500 underline underline-offset-2 hover:text-slate-700">masuk di sini</a>
+                            untuk memverifikasi pengajuan.
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        @endif
 
         <!-- What goes into an SKPI -->
         <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20">

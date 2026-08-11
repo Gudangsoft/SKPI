@@ -11,6 +11,44 @@
     }
 @endphp
 
+@if ($setting->hasContactInfo() || $setting->hasSocialLinks())
+    <div class="hidden border-b border-slate-100 bg-slate-50 sm:block">
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-1.5 text-xs text-slate-500">
+            <div class="flex items-center gap-4">
+                @if ($setting->contact_phone)
+                    <span class="inline-flex items-center gap-1.5">
+                        <x-heroicon-o-phone class="h-3.5 w-3.5" />
+                        {{ $setting->contact_phone }}
+                    </span>
+                @endif
+                @if ($setting->contact_email)
+                    <span class="inline-flex items-center gap-1.5">
+                        <x-heroicon-o-envelope class="h-3.5 w-3.5" />
+                        {{ $setting->contact_email }}
+                    </span>
+                @endif
+            </div>
+
+            @if ($setting->hasSocialLinks())
+                <div class="flex items-center gap-3">
+                    @foreach ([
+                        'facebook' => $setting->social_facebook_url,
+                        'instagram' => $setting->social_instagram_url,
+                        'twitter' => $setting->social_twitter_url,
+                        'youtube' => $setting->social_youtube_url,
+                    ] as $platform => $url)
+                        @if ($url)
+                            <a href="{{ $url }}" target="_blank" rel="noopener" class="text-slate-400 transition hover:text-slate-700">
+                                <x-social-icon :platform="$platform" class="h-3.5 w-3.5" />
+                            </a>
+                        @endif
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
+@endif
+
 <header class="sticky top-0 z-30 border-b border-slate-100 bg-white/80 backdrop-blur">
     <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <a href="{{ url('/') }}" class="flex items-center gap-2.5">

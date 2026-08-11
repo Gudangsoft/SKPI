@@ -42,8 +42,11 @@
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium">Pengajuan SKPI</h3>
                     <p class="mt-2 text-sm text-gray-600">
-                        Fitur pengajuan Surat Keterangan Pendamping Ijazah akan segera tersedia di sini.
+                        Ajukan atau lanjutkan pengajuan Surat Keterangan Pendamping Ijazah Anda.
                     </p>
+                    <a href="{{ route('pengajuan.index') }}" class="mt-3 inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+                        Buka Pengajuan SKPI
+                    </a>
                 </div>
             </div>
         </div>

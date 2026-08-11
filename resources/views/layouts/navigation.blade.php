@@ -1,23 +1,42 @@
+@php
+    $setting = \App\Models\Setting::current();
+    $studentMenu = \App\Models\Menu::forSlug('student-navbar');
+    $isMenuItemActive = function (\App\Models\MenuItem $item) {
+        if ($item->type !== 'route' || ! $item->route_name) {
+            return false;
+        }
+
+        return request()->routeIs($item->route_name)
+            || request()->routeIs(\Illuminate\Support\Str::before($item->route_name, '.').'.*');
+    };
+@endphp
+
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                <div class="shrink-0 flex items-center gap-2.5">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
+                        @if ($setting->logoUrl())
+                            <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->app_name }}" class="h-8 w-8 rounded-lg object-cover">
+                        @else
+                            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                                <x-heroicon-o-academic-cap class="h-4.5 w-4.5" />
+                            </span>
+                        @endif
+                        <span class="text-base font-semibold tracking-tight text-slate-900">{{ $setting->app_name }}</span>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('mahasiswa.profil.edit')" :active="request()->routeIs('mahasiswa.profil.edit')">
-                        {{ __('Data Mahasiswa') }}
-                    </x-nav-link>
+                    @foreach ($studentMenu?->rootItems ?? [] as $item)
+                        <x-nav-link :href="$item->resolvedUrl()" :active="$isMenuItemActive($item)">
+                            {{ $item->label }}
+                        </x-nav-link>
+                    @endforeach
                 </div>
             </div>
 
@@ -70,12 +89,11 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('mahasiswa.profil.edit')" :active="request()->routeIs('mahasiswa.profil.edit')">
-                {{ __('Data Mahasiswa') }}
-            </x-responsive-nav-link>
+            @foreach ($studentMenu?->rootItems ?? [] as $item)
+                <x-responsive-nav-link :href="$item->resolvedUrl()" :active="$isMenuItemActive($item)">
+                    {{ $item->label }}
+                </x-responsive-nav-link>
+            @endforeach
         </div>
 
         <!-- Responsive Settings Options -->

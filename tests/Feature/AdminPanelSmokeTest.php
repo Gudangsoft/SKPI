@@ -1,8 +1,6 @@
 <?php
 
-use App\Models\Fakultas;
 use App\Models\Mahasiswa;
-use App\Models\ProgramStudi;
 use App\Models\User;
 use App\Support\Roles;
 use Database\Seeders\DatabaseSeeder;
@@ -23,6 +21,23 @@ it('allows super_admin to view master data resources', function () {
     $this->get('/admin/mahasiswas/create')->assertSuccessful();
     $this->get('/admin/users')->assertSuccessful();
     $this->get('/admin/users/create')->assertSuccessful();
+    $this->get('/admin/pengajuan-skpis')->assertSuccessful();
+    $this->get('/admin/pejabat-penandatangans')->assertSuccessful();
+    $this->get('/admin/settings')->assertSuccessful();
+});
+
+it('lets admin_prodi load the dashboard with its scoped widgets', function () {
+    $adminProdi = User::where('email', 'adminprodi.ti@skpi.test')->firstOrFail();
+
+    $this->actingAs($adminProdi);
+    $this->get('/admin')->assertSuccessful();
+});
+
+it('lets kaprodi load the dashboard with its scoped widgets', function () {
+    $kaprodi = User::where('email', 'kaprodi.ti@skpi.test')->firstOrFail();
+
+    $this->actingAs($kaprodi);
+    $this->get('/admin')->assertSuccessful();
 });
 
 it('blocks mahasiswa role from accessing the admin panel', function () {
@@ -31,6 +46,28 @@ it('blocks mahasiswa role from accessing the admin panel', function () {
     $this->actingAs($mahasiswaUser);
 
     $this->get('/admin')->assertForbidden();
+});
+
+it('blocks mahasiswa role from the pengajuan-skpis resource', function () {
+    $mahasiswaUser = Mahasiswa::firstOrFail()->user;
+
+    $this->actingAs($mahasiswaUser);
+
+    $this->get('/admin/pengajuan-skpis')->assertForbidden();
+});
+
+it('lets admin_prodi view the pengajuan-skpis resource', function () {
+    $adminProdi = User::where('email', 'adminprodi.ti@skpi.test')->firstOrFail();
+
+    $this->actingAs($adminProdi);
+    $this->get('/admin/pengajuan-skpis')->assertSuccessful();
+});
+
+it('lets kaprodi view the pengajuan-skpis resource', function () {
+    $kaprodi = User::where('email', 'kaprodi.ti@skpi.test')->firstOrFail();
+
+    $this->actingAs($kaprodi);
+    $this->get('/admin/pengajuan-skpis')->assertSuccessful();
 });
 
 it('scopes admin_prodi to only their own program studi mahasiswa', function () {

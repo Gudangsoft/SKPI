@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Mahasiswa;
-use App\Support\Roles;
+use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -48,7 +48,7 @@ it('lets a mahasiswa update their own biodata', function () {
 });
 
 it('rejects staff credentials on the student login form', function () {
-    $adminProdi = \App\Models\User::where('email', 'adminprodi.ti@skpi.test')->firstOrFail();
+    $adminProdi = User::where('email', 'adminprodi.ti@skpi.test')->firstOrFail();
 
     $response = $this->post('/login', [
         'email' => $adminProdi->email,
@@ -60,9 +60,20 @@ it('rejects staff credentials on the student login form', function () {
 });
 
 it('blocks staff roles from student routes', function () {
-    $adminProdi = \App\Models\User::where('email', 'adminprodi.ti@skpi.test')->firstOrFail();
+    $adminProdi = User::where('email', 'adminprodi.ti@skpi.test')->firstOrFail();
 
     $this->actingAs($adminProdi);
 
     $this->get('/dashboard')->assertForbidden();
+});
+
+it('still links to all three core routes now that the navbar is menu-driven', function () {
+    $mahasiswa = Mahasiswa::firstOrFail();
+    $this->actingAs($mahasiswa->user);
+
+    $this->get('/dashboard')
+        ->assertSuccessful()
+        ->assertSee(route('dashboard'), false)
+        ->assertSee(route('mahasiswa.profil.edit'), false)
+        ->assertSee(route('pengajuan.index'), false);
 });

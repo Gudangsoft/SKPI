@@ -82,6 +82,24 @@
         .menu-tree-delete:hover { color: #dc2626; }
         .menu-tree-children { padding: 0 0.5rem 0.5rem 2rem; }
         .fi-sortable-ghost { opacity: 0.4; }
+
+        .dark .skpi-menu-tab { background: #1e293b; color: #cbd5e1; box-shadow: inset 0 0 0 1px #334155; }
+        .dark .skpi-menu-tab:hover { background: #334155; }
+        .dark .skpi-menu-tab-active { background: #0d9488; color: #fff; box-shadow: none; }
+
+        .dark .skpi-panel { background: #1e293b; border-color: #334155; }
+        .dark .skpi-panel-title { color: #f1f5f9; }
+        .dark .skpi-panel-hint { color: #94a3b8; }
+
+        .dark .menu-tree-list:has(> li[data-placeholder]) { border-color: #475569; }
+        .dark .menu-tree-item { background: #0f172a; border-color: #334155; }
+        .dark .menu-tree-placeholder { color: #475569; }
+        .dark .drag-handle { color: #475569; }
+        .dark .drag-handle:hover { color: #94a3b8; }
+        .dark .menu-tree-type-badge { background: #334155; color: #cbd5e1; }
+        .dark .menu-tree-label-input { color: #e2e8f0; }
+        .dark .menu-tree-delete { color: #b91c1c; }
+        .dark .menu-tree-delete:hover { color: #ef4444; }
     </style>
 
     <script>

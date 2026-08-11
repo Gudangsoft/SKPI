@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\DashboardController;
@@ -17,6 +18,10 @@ Route::get('/halaman/{slug}', [PageController::class, 'show'])->name('pages.show
 
 Route::get('/verifikasi', [VerificationController::class, 'index'])->name('verification.index');
 Route::get('/verifikasi/{token}', [VerificationController::class, 'show'])->name('verification.show');
+
+Route::get('/admin/impersonate/stop', [ImpersonationController::class, 'stop'])
+    ->middleware('auth')
+    ->name('impersonate.stop');
 
 Route::middleware(['auth', 'role:'.Roles::MAHASISWA])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

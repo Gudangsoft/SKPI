@@ -43,6 +43,47 @@ it('lets super_admin add a custom url item to a menu', function () {
     expect(MenuItem::where('menu_id', $menu->id)->where('label', 'Tautan Eksternal')->exists())->toBeTrue();
 });
 
+it('lets super_admin add a menu item that opens in a new tab', function () {
+    $superAdmin = User::where('email', 'superadmin@skpi.test')->firstOrFail();
+    $this->actingAs($superAdmin);
+
+    $menu = Menu::where('slug', 'landing-navbar')->firstOrFail();
+
+    Livewire::test(MenuBuilder::class)
+        ->set('menuId', $menu->id)
+        ->fillForm([
+            'type' => 'url',
+            'url' => 'https://example.test',
+            'label' => 'Tautan Tab Baru',
+            'target_blank' => true,
+        ])
+        ->call('addItem');
+
+    $item = MenuItem::where('menu_id', $menu->id)->where('label', 'Tautan Tab Baru')->firstOrFail();
+    expect($item->target_blank)->toBeTrue();
+});
+
+it('lets super_admin toggle target_blank on an existing menu item', function () {
+    $superAdmin = User::where('email', 'superadmin@skpi.test')->firstOrFail();
+    $this->actingAs($superAdmin);
+
+    $menu = Menu::where('slug', 'landing-navbar')->firstOrFail();
+    $item = $menu->items()->firstOrFail();
+    expect($item->target_blank)->toBeFalse();
+
+    Livewire::test(MenuBuilder::class)
+        ->set('menuId', $menu->id)
+        ->call('toggleTargetBlank', $item->id);
+
+    expect($item->refresh()->target_blank)->toBeTrue();
+
+    Livewire::test(MenuBuilder::class)
+        ->set('menuId', $menu->id)
+        ->call('toggleTargetBlank', $item->id);
+
+    expect($item->refresh()->target_blank)->toBeFalse();
+});
+
 it('persists a re-parented tree via updateTree', function () {
     $superAdmin = User::where('email', 'superadmin@skpi.test')->firstOrFail();
     $this->actingAs($superAdmin);

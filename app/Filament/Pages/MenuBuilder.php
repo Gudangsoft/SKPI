@@ -10,6 +10,7 @@ use BackedEnum;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Utilities\Get;
@@ -48,7 +49,7 @@ class MenuBuilder extends Page
 
         $this->menuId = $menu?->id ?? Menu::query()->orderBy('id')->value('id');
 
-        $this->form->fill(['type' => 'page']);
+        $this->form->fill(['type' => 'page', 'target_blank' => false]);
     }
 
     public function form(Schema $schema): Schema
@@ -88,6 +89,9 @@ class MenuBuilder extends Page
                     ->placeholder('Nama tampilan menu')
                     ->required()
                     ->maxLength(255),
+                Toggle::make('target_blank')
+                    ->label('Buka di Tab Baru')
+                    ->helperText('Aktifkan agar tautan terbuka di tab baru, bukan menggantikan halaman saat ini.'),
             ])
             ->statePath('data');
     }
@@ -133,6 +137,7 @@ class MenuBuilder extends Page
             'id' => $item->id,
             'label' => $item->label,
             'type' => $item->type,
+            'target_blank' => $item->target_blank,
             'children' => $this->mapItems($item->children),
         ])->values()->all();
     }
@@ -155,6 +160,7 @@ class MenuBuilder extends Page
             'page_id' => $data['type'] === 'page' ? $data['page_id'] : null,
             'url' => $data['type'] === 'url' ? $data['url'] : null,
             'route_name' => $data['type'] === 'route' ? $data['route_name'] : null,
+            'target_blank' => $data['target_blank'] ?? false,
             'sort_order' => $maxOrder + 1,
         ]);
 
@@ -179,6 +185,19 @@ class MenuBuilder extends Page
         }
 
         MenuItem::where('id', $id)->where('menu_id', $this->menuId)->update(['label' => $label]);
+    }
+
+    public function toggleTargetBlank(int $id): void
+    {
+        $item = MenuItem::where('id', $id)->where('menu_id', $this->menuId)->first();
+
+        if (! $item) {
+            return;
+        }
+
+        $item->update(['target_blank' => ! $item->target_blank]);
+
+        $this->redirect(static::getUrl(['menu' => $this->menuId]));
     }
 
     /**

@@ -69,7 +69,11 @@
         .menu-tree-placeholder { padding: 0.5rem 0.75rem; font-size: 0.75rem; color: #cbd5e1; pointer-events: none; }
         .drag-handle { cursor: move; color: #cbd5e1; flex-shrink: 0; }
         .drag-handle:hover { color: #64748b; }
-        .drag-handle svg, .menu-tree-delete svg { width: 1rem; height: 1rem; }
+        .drag-handle svg, .menu-tree-delete svg, .menu-tree-target-blank svg { width: 1rem; height: 1rem; }
+        .menu-tree-target-blank { color: #cbd5e1; flex-shrink: 0; background: none; border: 0; cursor: pointer; padding: 0; }
+        .menu-tree-target-blank:hover { color: #64748b; }
+        .menu-tree-target-blank-active { color: #0d9488; }
+        .menu-tree-target-blank-active:hover { color: #0f766e; }
         .menu-tree-type-badge {
             border-radius: 0.25rem; background: #e2e8f0; padding: 0.125rem 0.375rem;
             font-size: 0.625rem; font-weight: 600; text-transform: uppercase; color: #64748b; flex-shrink: 0;
@@ -96,6 +100,10 @@
         .dark .menu-tree-placeholder { color: #475569; }
         .dark .drag-handle { color: #475569; }
         .dark .drag-handle:hover { color: #94a3b8; }
+        .dark .menu-tree-target-blank { color: #475569; }
+        .dark .menu-tree-target-blank:hover { color: #94a3b8; }
+        .dark .menu-tree-target-blank-active { color: #2dd4bf; }
+        .dark .menu-tree-target-blank-active:hover { color: #5eead4; }
         .dark .menu-tree-type-badge { background: #334155; color: #cbd5e1; }
         .dark .menu-tree-label-input { color: #e2e8f0; }
         .dark .menu-tree-delete { color: #b91c1c; }

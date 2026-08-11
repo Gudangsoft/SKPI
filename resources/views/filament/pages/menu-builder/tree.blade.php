@@ -25,6 +25,15 @@
 
                 <button
                     type="button"
+                    wire:click="toggleTargetBlank({{ $node['id'] }})"
+                    title="{{ $node['target_blank'] ? 'Terbuka di tab baru — klik untuk buka di tab yang sama' : 'Terbuka di tab yang sama — klik untuk buka di tab baru' }}"
+                    class="menu-tree-target-blank {{ $node['target_blank'] ? 'menu-tree-target-blank-active' : '' }}"
+                >
+                    <x-heroicon-o-arrow-top-right-on-square />
+                </button>
+
+                <button
+                    type="button"
                     wire:click="deleteItem({{ $node['id'] }})"
                     wire:confirm="Hapus item ini beserta sub-menunya?"
                     class="menu-tree-delete"

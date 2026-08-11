@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\PengajuanController;
 use App\Http\Controllers\Student\ProfilController;
+use App\Http\Controllers\VerificationController;
 use App\Support\Roles;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,9 @@ Route::get('/', function () {
 });
 
 Route::get('/halaman/{slug}', [PageController::class, 'show'])->name('pages.show');
+
+Route::get('/verifikasi', [VerificationController::class, 'index'])->name('verification.index');
+Route::get('/verifikasi/{token}', [VerificationController::class, 'show'])->name('verification.show');
 
 Route::middleware(['auth', 'role:'.Roles::MAHASISWA])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

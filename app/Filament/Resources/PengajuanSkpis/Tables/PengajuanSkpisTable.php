@@ -32,6 +32,8 @@ class PengajuanSkpisTable
                 PengajuanSkpiResource::verifikasiAction(),
                 PengajuanSkpiResource::mintaRevisiAction(),
                 PengajuanSkpiResource::setujuiAction(),
+                PengajuanSkpiResource::terbitkanNomorAction(),
+                PengajuanSkpiResource::terbitkanPdfAction(),
             ]);
     }
 }

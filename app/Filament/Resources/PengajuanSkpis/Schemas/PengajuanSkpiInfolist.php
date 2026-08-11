@@ -9,6 +9,7 @@ use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class PengajuanSkpiInfolist
 {
@@ -37,6 +38,29 @@ class PengajuanSkpiInfolist
                         TextEntry::make('judul_skripsi')->label('Judul Skripsi')->placeholder('—')->columnSpanFull(),
                         TextEntry::make('tanggal_lulus')->label('Tanggal Lulus')->date('d M Y')->placeholder('—'),
                         TextEntry::make('predikat_kelulusan')->label('Predikat')->placeholder('—'),
+                    ]),
+
+                Section::make('Penerbitan SKPI')
+                    ->columns(2)
+                    ->visible(fn (PengajuanSkpi $record) => filled($record->nomor_skpi))
+                    ->components([
+                        TextEntry::make('nomor_skpi')->label('Nomor SKPI'),
+                        TextEntry::make('nomor_skpi_generated_at')->label('Tanggal Terbit Nomor')->dateTime('d M Y H:i')->placeholder('—'),
+                        TextEntry::make('pejabatPenandatangan.nama')->label('Pejabat Penandatangan')->placeholder('—'),
+                        TextEntry::make('published_at')->label('Tanggal Publikasi')->dateTime('d M Y H:i')->placeholder('—'),
+                        TextEntry::make('pdf_path')
+                            ->label('Dokumen PDF')
+                            ->state('Lihat / Unduh PDF')
+                            ->url(fn (PengajuanSkpi $record) => Storage::disk('public')->url($record->pdf_path))
+                            ->openUrlInNewTab()
+                            ->visible(fn (PengajuanSkpi $record) => filled($record->pdf_path)),
+                        TextEntry::make('verification_token')
+                            ->label('Tautan Verifikasi')
+                            ->state(fn (PengajuanSkpi $record) => route('verification.show', $record->verification_token))
+                            ->url(fn (PengajuanSkpi $record) => route('verification.show', $record->verification_token))
+                            ->openUrlInNewTab()
+                            ->visible(fn (PengajuanSkpi $record) => $record->status === PengajuanStatus::Published)
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('Prestasi')

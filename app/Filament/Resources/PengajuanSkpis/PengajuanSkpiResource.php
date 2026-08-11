@@ -7,10 +7,15 @@ use App\Filament\Resources\PengajuanSkpis\Pages\ListPengajuanSkpis;
 use App\Filament\Resources\PengajuanSkpis\Pages\ViewPengajuanSkpi;
 use App\Filament\Resources\PengajuanSkpis\Schemas\PengajuanSkpiInfolist;
 use App\Filament\Resources\PengajuanSkpis\Tables\PengajuanSkpisTable;
+use App\Models\PejabatPenandatangan;
 use App\Models\PengajuanSkpi;
+use App\Services\NomorSkpiGenerator;
 use App\Support\Roles;
 use BackedEnum;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Endroid\QrCode\Builder\Builder as QrCodeBuilder;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -114,6 +119,73 @@ class PengajuanSkpiResource extends Resource
             ]));
     }
 
+    public static function terbitkanNomorAction(): Action
+    {
+        return Action::make('terbitkanNomor')
+            ->label('Terbitkan Nomor')
+            ->color('success')
+            ->icon(Heroicon::OutlinedHashtag)
+            ->schema(fn (PengajuanSkpi $record) => [
+                Select::make('pejabat_penandatangan_id')
+                    ->label('Pejabat Penandatangan')
+                    ->options(fn () => PejabatPenandatangan::query()
+                        ->where('aktif', true)
+                        ->where(fn (Builder $q) => $q
+                            ->whereNull('fakultas_id')
+                            ->orWhere('fakultas_id', $record->mahasiswa->programStudi->fakultas_id))
+                        ->get()
+                        ->mapWithKeys(fn (PejabatPenandatangan $p) => [$p->id => "{$p->nama} — {$p->jabatan}"]))
+                    ->required()
+                    ->native(false),
+            ])
+            ->visible(fn (PengajuanSkpi $record): bool => static::canTerbitkanNomor($record))
+            ->action(fn (PengajuanSkpi $record, array $data) => $record->update([
+                'nomor_skpi' => app(NomorSkpiGenerator::class)->generate($record),
+                'pejabat_penandatangan_id' => $data['pejabat_penandatangan_id'],
+                'nomor_skpi_generated_at' => now(),
+                'status' => PengajuanStatus::NomorTerbit,
+            ]));
+    }
+
+    public static function terbitkanPdfAction(): Action
+    {
+        return Action::make('terbitkanPdf')
+            ->label('Terbitkan PDF')
+            ->color('success')
+            ->icon(Heroicon::OutlinedDocumentArrowDown)
+            ->requiresConfirmation()
+            ->modalDescription('Dokumen PDF resmi akan dibuat dan pengajuan berstatus Terbit.')
+            ->visible(fn (PengajuanSkpi $record): bool => static::canTerbitkanPdf($record))
+            ->action(function (PengajuanSkpi $record) {
+                $record->load([
+                    'mahasiswa.programStudi.fakultas',
+                    'prestasis',
+                    'organisasis',
+                    'sertifikasis',
+                    'pelatihanSeminars',
+                    'magangPkls',
+                    'kompetensiAktivitas',
+                    'pejabatPenandatangan',
+                ]);
+
+                $qrCode = (new QrCodeBuilder)->build(
+                    data: route('verification.show', $record->verification_token),
+                    size: 180,
+                    margin: 4,
+                )->getDataUri();
+
+                $filename = "skpi-pdf/{$record->id}.pdf";
+
+                Pdf::loadView('pdf.skpi', ['pengajuan' => $record, 'qrCode' => $qrCode])
+                    ->save($filename, 'public');
+
+                $record->update([
+                    'pdf_path' => $filename,
+                    'status' => PengajuanStatus::Published,
+                ]);
+            });
+    }
+
     protected static function canVerifikasiProdi(PengajuanSkpi $record): bool
     {
         return $record->status === PengajuanStatus::Diajukan
@@ -129,5 +201,17 @@ class PengajuanSkpiResource extends Resource
     protected static function canMintaRevisi(PengajuanSkpi $record): bool
     {
         return static::canVerifikasiProdi($record) || static::canSetujuiFakultas($record);
+    }
+
+    protected static function canTerbitkanNomor(PengajuanSkpi $record): bool
+    {
+        return $record->status === PengajuanStatus::DisetujuiFakultas
+            && (Auth::user()?->hasAnyRole([Roles::KAPRODI, Roles::SUPER_ADMIN]) ?? false);
+    }
+
+    protected static function canTerbitkanPdf(PengajuanSkpi $record): bool
+    {
+        return $record->status === PengajuanStatus::NomorTerbit
+            && (Auth::user()?->hasAnyRole([Roles::KAPRODI, Roles::SUPER_ADMIN]) ?? false);
     }
 }

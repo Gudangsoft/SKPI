@@ -24,6 +24,22 @@
                         <strong>Catatan revisi:</strong> {{ $pengajuan->catatan_revisi }}
                     </div>
                 @endif
+
+                @if ($pengajuan->status === \App\Enums\PengajuanStatus::Published)
+                    <div class="p-4 bg-emerald-50 rounded-lg flex items-center justify-between gap-4">
+                        <div>
+                            <p class="text-sm font-medium text-emerald-800">SKPI Anda telah terbit</p>
+                            <p class="text-xs text-emerald-600 mt-0.5">Nomor: {{ $pengajuan->nomor_skpi }}</p>
+                        </div>
+                        <a
+                            href="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($pengajuan->pdf_path) }}"
+                            target="_blank"
+                            class="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+                        >
+                            Unduh SKPI
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <div class="bg-white shadow sm:rounded-lg p-6 mb-6">

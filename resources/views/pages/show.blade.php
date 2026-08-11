@@ -12,6 +12,10 @@
             <meta name="description" content="{{ $page->meta_description }}">
         @endif
 
+        @if ($page->featuredImageUrl())
+            <meta property="og:image" content="{{ $page->featuredImageUrl() }}">
+        @endif
+
         @if ($setting->faviconUrl())
             <link rel="icon" href="{{ $setting->faviconUrl() }}">
         @endif
@@ -25,8 +29,12 @@
         <article class="mx-auto max-w-3xl px-6 py-16">
             <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{{ $page->title }}</h1>
 
+            @if ($page->featuredImageUrl())
+                <img src="{{ $page->featuredImageUrl() }}" alt="{{ $page->title }}" class="mt-8 aspect-[2/1] w-full rounded-2xl object-cover">
+            @endif
+
             <div class="prose prose-slate mt-8 max-w-none">
-                {!! $page->content !!}
+                {!! $page->renderRichContent('content') !!}
             </div>
         </article>
 

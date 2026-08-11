@@ -8,12 +8,14 @@ use App\Filament\Resources\Pages\Pages\ListPages;
 use App\Models\Page;
 use BackedEnum;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -52,6 +54,16 @@ class PageResource extends Resource
                     ->maxLength(255)
                     ->unique(ignoreRecord: true)
                     ->helperText(fn ($state) => $state ? url('/halaman/'.$state) : null),
+                FileUpload::make('featured_image_path')
+                    ->label('Gambar Utama')
+                    ->image()
+                    ->disk('public')
+                    ->directory('pages')
+                    ->visibility('public')
+                    ->imageEditor()
+                    ->maxSize(2048)
+                    ->helperText('Tampil di atas judul halaman. Disarankan lanskap lebar minimal 1200×630px. Maksimal 2 MB.')
+                    ->columnSpanFull(),
                 RichEditor::make('content')
                     ->label('Konten')
                     ->columnSpanFull(),
@@ -69,6 +81,7 @@ class PageResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('featured_image_path')->label('Gambar')->disk('public'),
                 TextColumn::make('title')->label('Judul')->searchable()->sortable(),
                 TextColumn::make('slug')->label('Slug')->searchable(),
                 TextColumn::make('published_at')

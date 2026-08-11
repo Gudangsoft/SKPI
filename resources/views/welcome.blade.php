@@ -49,7 +49,7 @@
                 @mouseenter="stop()"
                 @mouseleave="start()"
                 class="relative isolate overflow-hidden bg-slate-900"
-                style="min-height: 520px;"
+                style="min-height: 100vh; min-height: 100dvh;"
             >
                 @foreach ($heroSlides as $index => $slide)
                     <div

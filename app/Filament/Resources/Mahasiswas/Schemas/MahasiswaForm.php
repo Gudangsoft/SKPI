@@ -101,6 +101,8 @@ class MahasiswaForm
                             ->disk('local')
                             ->directory('mahasiswa/foto')
                             ->visibility('private')
+                            ->maxSize(1024)
+                            ->helperText('Foto formal (pas foto), rasio 3:4, disarankan minimal 300×400px. Maksimal 1 MB.')
                             ->columnSpanFull(),
                     ]),
             ]);

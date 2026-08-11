@@ -55,7 +55,9 @@ class PejabatPenandatanganResource extends Resource
                     ->image()
                     ->disk('public')
                     ->directory('signatures')
-                    ->visibility('public'),
+                    ->visibility('public')
+                    ->maxSize(512)
+                    ->helperText('Format PNG latar transparan disarankan, ukuran sekitar 400×200px. Maksimal 512 KB.'),
                 Toggle::make('aktif')
                     ->label('Aktif')
                     ->default(true),

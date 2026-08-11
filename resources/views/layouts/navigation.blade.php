@@ -20,10 +20,10 @@
                 <div class="shrink-0 flex items-center gap-2.5">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
                         @if ($setting->logoUrl())
-                            <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->app_name }}" class="h-8 w-8 rounded-lg object-cover">
+                            <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->app_name }}" class="h-11 w-11 rounded-lg object-cover">
                         @else
-                            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
-                                <x-heroicon-o-academic-cap class="h-4.5 w-4.5" />
+                            <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                                <x-heroicon-o-academic-cap class="h-6 w-6" />
                             </span>
                         @endif
                         <span class="text-base font-semibold tracking-tight text-slate-900">{{ $setting->app_name }}</span>

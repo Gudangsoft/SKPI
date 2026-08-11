@@ -47,10 +47,10 @@
             .skpi-menu-builder-grid { grid-template-columns: 1fr 2fr; }
         }
 
-        .skpi-panel { border-radius: 0.75rem; border: 1px solid #e2e8f0; background: #fff; padding: 1rem; }
+        .skpi-panel { border-radius: 0.75rem; border: 1px solid #e2e8f0; background: #fff; padding: 1rem; min-width: 0; overflow-x: hidden; }
         .skpi-panel-title { font-size: 0.875rem; font-weight: 600; color: #0f172a; margin: 0; }
         .skpi-panel-hint { font-size: 0.75rem; color: #64748b; margin: 0.25rem 0 0; }
-        .skpi-add-form { margin-top: 1rem; }
+        .skpi-add-form { margin-top: 1rem; min-width: 0; }
         .skpi-add-submit { margin-top: 1rem; }
         .skpi-tree-wrapper { margin-top: 1rem; }
 

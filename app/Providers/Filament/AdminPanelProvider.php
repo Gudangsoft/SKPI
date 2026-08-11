@@ -30,8 +30,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName(fn () => Setting::current()->app_name)
             ->brandLogo(fn () => Setting::current()->logoUrl())
+            ->brandLogoHeight('2.75rem')
             ->favicon(fn () => Setting::current()->faviconUrl())
             ->login()
+            ->profile(isSimple: false)
             ->colors([
                 'primary' => Color::Teal,
             ])

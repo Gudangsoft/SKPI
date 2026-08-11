@@ -85,13 +85,17 @@ class Settings extends Page
                             ->disk('public')
                             ->directory('branding')
                             ->visibility('public')
-                            ->imageEditor(),
+                            ->imageEditor()
+                            ->maxSize(1024)
+                            ->helperText('Format PNG/JPG, disarankan persegi minimal 512×512px. Maksimal 1 MB.'),
                         FileUpload::make('favicon_path')
                             ->label('Favicon')
                             ->image()
                             ->disk('public')
                             ->directory('branding')
-                            ->visibility('public'),
+                            ->visibility('public')
+                            ->maxSize(512)
+                            ->helperText('Format PNG/ICO, disarankan persegi 512×512px. Maksimal 512 KB.'),
                     ]),
 
                 Section::make('Kontak & Media Sosial')
@@ -149,6 +153,8 @@ class Settings extends Page
                             ->disk('public')
                             ->directory('branding')
                             ->visibility('public')
+                            ->maxSize(2048)
+                            ->helperText('Format JPG/PNG, disarankan lanskap lebar minimal 1920×600px. Maksimal 2 MB.')
                             ->visible(fn (Get $get) => $get('footer_bg_type') === 'image'),
                         ColorPicker::make('footer_bg_color')
                             ->label('Warna Latar')

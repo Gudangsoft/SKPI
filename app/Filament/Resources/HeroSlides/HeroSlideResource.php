@@ -49,6 +49,8 @@ class HeroSlideResource extends Resource
                     ->visibility('public')
                     ->imageEditor()
                     ->required()
+                    ->maxSize(3072)
+                    ->helperText('Format JPG/PNG, disarankan lanskap lebar minimal 1920×1080px (rasio 16:9) karena tampil satu layar penuh. Maksimal 3 MB.')
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->label('Judul')

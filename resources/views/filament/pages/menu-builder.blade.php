@@ -56,7 +56,7 @@
 
         .menu-tree-list {
             list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.375rem;
-            min-height: 2.25rem; border-radius: 0.5rem;
+            min-height: 3rem; border-radius: 0.5rem;
         }
         .menu-tree-list[data-depth="1"] { min-height: 0; }
         .menu-tree-list:has(> li[data-placeholder]) {
@@ -142,6 +142,7 @@
                     forceFallback: true,
                     fallbackOnBody: true,
                     swapThreshold: 0.65,
+                    emptyInsertThreshold: 30,
                     onEnd,
                 });
             });

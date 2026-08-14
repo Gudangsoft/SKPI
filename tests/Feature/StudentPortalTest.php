@@ -2,6 +2,7 @@
 
 use App\Models\Mahasiswa;
 use App\Models\User;
+use App\Support\MathCaptcha;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -13,9 +14,12 @@ beforeEach(function () {
 it('allows a mahasiswa to log in and view the dashboard and profil', function () {
     $mahasiswa = Mahasiswa::firstOrFail();
 
+    [$a, $b] = MathCaptcha::generate('student_login');
+
     $response = $this->post('/login', [
         'email' => $mahasiswa->user->email,
         'password' => 'password',
+        'captcha' => $a + $b,
     ]);
 
     $response->assertRedirect(route('dashboard'));
@@ -50,9 +54,12 @@ it('lets a mahasiswa update their own biodata', function () {
 it('rejects staff credentials on the student login form', function () {
     $adminProdi = User::where('email', 'adminprodi.ti@skpi.test')->firstOrFail();
 
+    [$a, $b] = MathCaptcha::generate('student_login');
+
     $response = $this->post('/login', [
         'email' => $adminProdi->email,
         'password' => 'password',
+        'captcha' => $a + $b,
     ]);
 
     $response->assertSessionHasErrors('email');

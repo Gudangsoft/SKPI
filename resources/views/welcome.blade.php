@@ -85,22 +85,25 @@
                 @endforeach
 
                 @if ($heroSlides->count() > 1)
-                    <button @click="prev()" aria-label="Sebelumnya" class="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20">
-                        <x-heroicon-o-chevron-left class="h-5 w-5" />
-                    </button>
-                    <button @click="next()" aria-label="Berikutnya" class="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20">
-                        <x-heroicon-o-chevron-right class="h-5 w-5" />
-                    </button>
+                    <div class="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-4">
+                        <button @click="prev()" aria-label="Sebelumnya" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20">
+                            <x-heroicon-o-chevron-left class="h-4 w-4" />
+                        </button>
 
-                    <div class="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
-                        @foreach ($heroSlides as $index => $slide)
-                            <button
-                                @click="active = {{ $index }}"
-                                aria-label="Slide {{ $index + 1 }}"
-                                class="h-2 rounded-full bg-white transition-all"
-                                :class="active === {{ $index }} ? 'w-6 opacity-100' : 'w-2 opacity-40'"
-                            ></button>
-                        @endforeach
+                        <div class="flex items-center gap-2">
+                            @foreach ($heroSlides as $index => $slide)
+                                <button
+                                    @click="active = {{ $index }}"
+                                    aria-label="Slide {{ $index + 1 }}"
+                                    class="h-2 rounded-full bg-white transition-all"
+                                    :class="active === {{ $index }} ? 'w-6 opacity-100' : 'w-2 opacity-40'"
+                                ></button>
+                            @endforeach
+                        </div>
+
+                        <button @click="next()" aria-label="Berikutnya" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20">
+                            <x-heroicon-o-chevron-right class="h-4 w-4" />
+                        </button>
                     </div>
                 @endif
             </section>

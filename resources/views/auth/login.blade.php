@@ -44,6 +44,21 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
+        <!-- Captcha -->
+        <div>
+            <label for="captcha" class="mb-1 block text-sm font-medium text-slate-700">
+                Verifikasi: berapa {{ $captchaA }} + {{ $captchaB }}? <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+                <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <x-heroicon-o-shield-check class="h-4 w-4" />
+                </span>
+                <input id="captcha" type="number" name="captcha" required autocomplete="off" inputmode="numeric"
+                    class="block w-full rounded-lg border-gray-300 py-2.5 pl-10 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500" />
+            </div>
+            <x-input-error :messages="$errors->get('captcha')" class="mt-2" />
+        </div>
+
         <!-- Remember Me -->
         <div class="flex items-center justify-between">
             <label for="remember_me" class="inline-flex items-center">

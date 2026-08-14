@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Support\MathCaptcha;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,6 +31,14 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'captcha' => [
+                'required',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (! MathCaptcha::check('student_login', $value)) {
+                        $fail('Jawaban verifikasi salah, silakan coba lagi.');
+                    }
+                },
+            ],
         ];
     }
 
